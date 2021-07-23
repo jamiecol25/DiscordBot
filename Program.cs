@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using DiscordBot.Services;
+using DiscordBot.Database;
 
 namespace DiscordBot
 {
@@ -50,7 +51,10 @@ namespace DiscordBot
                 })
                 .ConfigureServices((context, services) =>
                 {
-                    services.AddHostedService<CommandHandler>();
+                    services
+                    .AddHostedService<CommandHandler>()
+                    .AddDbContext<DatabaseContext>()
+                    .AddSingleton<BankItems>();
                 })
                 .UseConsoleLifetime();
 
