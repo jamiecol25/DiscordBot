@@ -10,7 +10,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using DiscordBot.Services;
-using DiscordBot.Database;
 
 namespace DiscordBot
 {
@@ -25,36 +24,35 @@ namespace DiscordBot
                         .SetBasePath(Directory.GetCurrentDirectory())
                         .AddJsonFile("appsettings.json", false, true)
                         .Build();
-
                     x.AddConfiguration(configuration);
                 })
                 .ConfigureLogging(x =>
                 {
                     x.AddConsole();
-                    x.SetMinimumLevel(LogLevel.Debug); // Defines what kind of information should be logged (e.g. Debug, Information, Warning, Critical) adjust this to your liking
+                    x.SetMinimumLevel(LogLevel.Debug);
                 })
                 .ConfigureDiscordHost<DiscordSocketClient>((context, config) =>
                 {
                     config.SocketConfig = new DiscordSocketConfig
                     {
-                        LogLevel = LogSeverity.Verbose, // Defines what kind of information should be logged from the API (e.g. Verbose, Info, Warning, Critical) adjust this to your liking
-                        AlwaysDownloadUsers = true,
+                        LogLevel = Discord.LogSeverity.Debug,
+                        AlwaysDownloadUsers = false,
                         MessageCacheSize = 200,
                     };
 
-                    config.Token = context.Configuration["token"];
+                    config.Token = context.Configuration["Token"];
+
                 })
                 .UseCommandService((context, config) =>
                 {
                     config.CaseSensitiveCommands = false;
-                    config.LogLevel = LogSeverity.Verbose;
+                    config.LogLevel = LogSeverity.Debug;
+                    config.DefaultRunMode = RunMode.Sync;
                 })
                 .ConfigureServices((context, services) =>
                 {
                     services
-                    .AddHostedService<CommandHandler>()
-                    .AddDbContext<DatabaseContext>()
-                    .AddSingleton<BankItems>();
+                    .AddHostedService<CommandHandler>();
                 })
                 .UseConsoleLifetime();
 
