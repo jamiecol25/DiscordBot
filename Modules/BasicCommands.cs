@@ -32,7 +32,7 @@ namespace DiscordBot.Modules
         }
 
         [Command("getitems")]
-        public async Task Meme()
+        public async Task GetItems()
         {
             var client = new HttpClient();
             var result = await client.GetStringAsync("https://localhost:44358/api/bankitems");
